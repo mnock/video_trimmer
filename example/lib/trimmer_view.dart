@@ -8,6 +8,7 @@ class TrimmerView extends StatefulWidget {
   final File file;
 
   const TrimmerView(this.file, {Key? key}) : super(key: key);
+
   @override
   _TrimmerViewState createState() => _TrimmerViewState();
 }
@@ -40,6 +41,8 @@ class _TrimmerViewState extends State<TrimmerView> {
     _trimmer.saveTrimmedVideo(
       startValue: _startValue,
       endValue: _endValue,
+      ffmpegCommand: "",
+      customVideoFormat: ".mp4",
       onSave: (outputPath) {
         setState(() {
           _progressVisibility = false;
