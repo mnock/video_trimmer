@@ -24,7 +24,7 @@ class Trimmer {
   // final FlutterFFmpeg _flutterFFmpeg = FFmpegKit();
 
   final StreamController<TrimmerEvent> _controller =
-  StreamController<TrimmerEvent>.broadcast();
+      StreamController<TrimmerEvent>.broadcast();
 
   VideoPlayerController? _videoPlayerController;
 
@@ -48,8 +48,10 @@ class Trimmer {
     }
   }
 
-  Future<String> _createFolderInAppDocDir(String folderName,
-      StorageDir? storageDir,) async {
+  Future<String> _createFolderInAppDocDir(
+    String folderName,
+    StorageDir? storageDir,
+  ) async {
     Directory? _directory;
 
     if (storageDir == null) {
@@ -72,7 +74,7 @@ class Trimmer {
 
     // Directory + folder name
     final Directory _directoryFolder =
-    Directory('${_directory!.path}/$folderName/');
+        Directory('${_directory!.path}/$folderName/');
 
     if (await _directoryFolder.exists()) {
       // If folder already exists return path
@@ -82,7 +84,7 @@ class Trimmer {
       debugPrint('Creating');
       // If folder does not exists create folder and then return its path
       final Directory _directoryNewFolder =
-      await _directoryFolder.create(recursive: true);
+          await _directoryFolder.create(recursive: true);
       return _directoryNewFolder.path;
     }
   }
@@ -170,6 +172,7 @@ class Trimmer {
     String? videoFolderName,
     String? videoFileName,
     StorageDir? storageDir,
+    int scale = 1280,
   }) async {
     final String _videoPath = currentVideoFile!.path;
     final String _videoName = basename(_videoPath).split('.')[0];
@@ -201,7 +204,7 @@ class Trimmer {
       videoFolderName,
       storageDir,
     ).whenComplete(
-          () => debugPrint("Retrieved Trimmer folder"),
+      () => debugPrint("Retrieved Trimmer folder"),
     );
 
     Duration startPoint = Duration(milliseconds: startValue.toInt());
@@ -221,8 +224,7 @@ class Trimmer {
     }
 
     String _trimLengthCommand =
-        ' -ss $startPoint -i "$_videoPath" -t ${endPoint -
-        startPoint} ';
+        ' -ss $startPoint -i "$_videoPath" -t ${endPoint - startPoint} ';
 
     if (ffmpegCommand == null) {
       _command = '$_trimLengthCommand -c:a copy ';
@@ -235,10 +237,11 @@ class Trimmer {
         fpsGIF ??= 10;
         scaleGIF ??= 480;
         _command =
-        '$_trimLengthCommand -vf "fps=$fpsGIF,scale=$scaleGIF:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 ';
+            '$_trimLengthCommand -vf "fps=$fpsGIF,scale=$scaleGIF:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 ';
       }
     } else {
-      _command = '$_trimLengthCommand -r 20 -strict -2 -vf scale=-1:1280 -vcodec libx264 $ffmpegCommand ';
+      _command =
+          '$_trimLengthCommand -r 20 -strict -2 -vf scale=-1:$scale -vcodec libx264 $ffmpegCommand ';
       _outputFormatString = customVideoFormat;
     }
 
@@ -248,7 +251,7 @@ class Trimmer {
     print("压缩命令 $_command");
     FFmpegKit.executeAsync(_command, (session) async {
       final state =
-      FFmpegKitConfig.sessionStateToString(await session.getState());
+          FFmpegKitConfig.sessionStateToString(await session.getState());
       final returnCode = await session.getReturnCode();
 
       debugPrint("FFmpeg process exited with state $state and rc $returnCode");

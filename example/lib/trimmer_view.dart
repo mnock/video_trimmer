@@ -41,7 +41,6 @@ class _TrimmerViewState extends State<TrimmerView> {
     _trimmer.saveTrimmedVideo(
       startValue: _startValue,
       endValue: _endValue,
-      ffmpegCommand: "",
       customVideoFormat: ".mp4",
       onSave: (outputPath) {
         setState(() {
